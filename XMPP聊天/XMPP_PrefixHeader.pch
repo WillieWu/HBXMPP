@@ -1,0 +1,37 @@
+//
+//  XMPP_PrefixHeader.pch
+//  XMPP聊天
+//
+//  Created by 伍宏彬 on 15/12/7.
+//  Copyright © 2015年 伍宏彬. All rights reserved.
+//
+
+#ifndef XMPP_PrefixHeader_pch
+#define XMPP_PrefixHeader_pch
+
+#import <UIKit/UIKit.h>
+#import "UIView+HBView.h"
+#import <SystemConfiguration/SystemConfiguration.h>
+#import "XMPPFramework.h"
+#import "XMPP_Const.h"
+#import "XMPPCoreDataStorage.h"
+#import "HBXMPP.h"
+
+
+#ifdef DEBUG
+#define whbLog(...) NSLog(__VA_ARGS__)
+#else
+#define whbLog(...)
+#endif
+
+#pragma mark - 聊天信息设置
+#define chatTextFont [UIFont systemFontOfSize:17]
+
+#pragma mark - 其他
+#define RootDocumentPath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) firstObject]
+
+
+// Include any system framework and library headers here that should be included in all compilation units.
+// You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
+
+#endif /* XMPP_PrefixHeader_pch */
