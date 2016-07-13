@@ -23,5 +23,7 @@ UIKIT_EXTERN  NSString *const HBTypeVoice;
 UIKIT_EXTERN  NSString *const HBTypeImage;
 UIKIT_EXTERN  NSString *const HBTypeMap;
 UIKIT_EXTERN  NSString *const HBImageString;
+UIKIT_EXTERN const CGFloat chatViewH;
+
 
 #define HBChatBgMaxWidth [UIScreen mainScreen].bounds.size.width - HBUserIconImageWH - HBMid - 5 - HBMid - HBMid

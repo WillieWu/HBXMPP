@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-const NSUInteger HBXMPPHostPort = 5222;
-NSString *const HBXMPPHostName  = @"127.0.0.1";
-NSString *const HBXMPPOnline    = @"available";
-NSString *const HBXMPPOffline   = @"unavailable";
+const NSUInteger HBXMPPHostPort          = 5222;
+NSString *const HBXMPPHostName           = @"127.0.0.1";
+NSString *const HBXMPPOnline             = @"available";
+NSString *const HBXMPPOffline            = @"unavailable";
 
 
 const  NSInteger HBUserIconImageWH       = 40;
@@ -23,4 +23,5 @@ NSString *const HBTypeText               = @"chat";
 NSString *const HBTypeVoice              = @"voice";
 NSString *const HBTypeImage              = @"image";
 NSString *const HBTypeMap                = @"map";
-NSString *const HBImageString                = @"WHB_IMG";
+NSString *const HBImageString            = @"WHB_IMG";
+const CGFloat chatViewH                  = 44;

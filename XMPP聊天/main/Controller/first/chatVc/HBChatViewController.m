@@ -26,8 +26,6 @@
 
 @end
 
-static int chatViewH = 44;
-
 @implementation HBChatViewController
 
 - (void)viewDidLoad {
@@ -59,18 +57,29 @@ static int chatViewH = 44;
         request.fetchLimit = 10;
         
         NSArray *array = [context executeFetchRequest:request error:nil];
-
-        [array enumerateObjectsUsingBlock:^(XMPPMessageArchiving_Message_CoreDataObject *msg, NSUInteger idx, BOOL * _Nonnull stop) {
+        
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
-            HBChatModel *chatModel = [HBChatModel new];
-            chatModel.message = msg;
-
-            [self.chatContents insertObject:chatModel atIndex:0];
+            [array enumerateObjectsUsingBlock:^(XMPPMessageArchiving_Message_CoreDataObject *msg, NSUInteger idx, BOOL * _Nonnull stop) {
+                
+                HBChatModel *chatModel = [HBChatModel new];
+                chatModel.message = msg;
+                
+                [self.chatContents insertObject:chatModel atIndex:0];
+                
+            }];
             
-        }];
-        [self.tableView.mj_header endRefreshing];
-     
-        [self.tableView reloadData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [self.tableView.mj_header endRefreshing];
+                
+                [self.tableView reloadData];
+                
+            });
+        });
+
+        
+       
 
     }];
 
@@ -188,7 +197,7 @@ static int chatViewH = 44;
 }
 - (void)chatViewDidChangeFrame:(HBChatView *)chatView
 {
-    whbLog(@"chatViewDidChangeFrame - %@",NSStringFromCGRect(chatView.frame));
+//    whbLog(@"chatViewDidChangeFrame - %@",NSStringFromCGRect(chatView.frame));
     CGFloat toButtom = [UIScreen mainScreen].bounds.size.height - chatView.HB_Y;
     [self.tableView setContentInset:UIEdgeInsetsMake(0, 0, toButtom, 0)];
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];

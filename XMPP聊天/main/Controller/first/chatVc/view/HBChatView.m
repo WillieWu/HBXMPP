@@ -15,16 +15,20 @@
 #import "NSAttributedString+HBAttributeString.h"
 #import "UIImage+HBImage.h"
 #import "HBRecordHUD.h"
+#import "NSString+HBString.h"
 #import "NSFileManager+HBFileManagerHelp.h"
 
 @interface HBChatView()<UITextViewDelegate,HBEmjoyViewDelegate>
 {
     CGRect _originFrame;
     CGRect _newFrame;
-    int _originaButtomViewH;
-    int _originaTextViewH;
+    CGFloat _originaButtomViewH;//初始bar的高度
+    CGFloat _originaTextViewH;//初始TextView的高度
     CGFloat _lastY;
     CGFloat _lastH;
+    //保留上一次高度
+    CGRect _lastTextViewFrame;
+    CGRect _lastButtomFrame;
 }
 @property (nonatomic, strong) HBTextView *textView;
 @property (nonatomic, weak) HBButton *selectBtn;
@@ -99,20 +103,21 @@ static CGFloat textViewY = 5;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textViewTextChange:) name:UITextViewTextDidChangeNotification object:self.textView];
     
     [self.textView addObserver:self forKeyPath:@"attributedText" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:NULL];
-    
+    [self.textView addObserver:self forKeyPath:@"inputView" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:NULL];
     //6.监听自身frame
     [self addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
     
-    //UITextInputCurrentInputModeDidChangeNotification
-#warning 处理键盘位置bug
 }
 - (void)caclulaterTextViewHeight{
+    
     NSString *context = [self.textView.attributedText HB_ChatAttributeStringToString];
     
     if (![context hasSuffix:@"\n"] && context.length > 0) {
 
-        CGFloat getHeight = [self.textView sizeThatFits:CGSizeMake(self.textView.HB_W, MAXFLOAT)].height;
-//        whbLog(@"caclulaterTextViewHeight - %@",@(getHeight));
+        CGFloat getSysHeight = [self.textView sizeThatFits:CGSizeMake(self.textView.HB_W, MAXFLOAT)].height;
+        CGFloat getHeight = [HBHelp HB_attributeBoundsSize:CGSizeMake(self.textView.HB_W, MAXFLOAT)
+                  attributeContentText:[[context HB_StringToChatAttributeString] mutableCopy]].height;
+        
         if (getHeight <= _originaTextViewH) {
             
             self.textView.HB_H = _originaTextViewH;
@@ -123,12 +128,16 @@ static CGFloat textViewY = 5;
                 getHeight = _originaButtomViewH * 2;
             }
             self.textView.HB_H = getHeight;
+            whbLog(@"caclulaterTextViewHeight :%@ - %@",@(getHeight),@(getSysHeight));
         }
         
         self.HB_H = self.textView.HB_H + self.textView.HB_Y * 2;
         self.HB_Y -= self.HB_H - _lastH;
         //2.始终更新最后的状态
         [self layoutIfNeeded];
+        
+        _lastButtomFrame = self.frame;
+        _lastTextViewFrame = self.textView.frame;
         
     }
 }
@@ -242,20 +251,27 @@ static CGFloat textViewY = 5;
     NSDictionary *dic = info.userInfo;
     NSTimeInterval showTime = [[dic objectForKey:@"UIKeyboardAnimationDurationUserInfoKey"] floatValue];
     CGRect rect = [[dic objectForKey:@"UIKeyboardFrameEndUserInfoKey"] CGRectValue];
-    CGRect rect2 = [[dic objectForKey:@"UIKeyboardFrameBeginUserInfoKey"] CGRectValue];
-    if (rect2.origin.y == rect.origin.y) return;
+    
+    if (self.HB_Y == [UIScreen mainScreen].bounds.size.height - rect.size.height - self.HB_H) {
+        return;
+    }
     [UIView animateWithDuration:showTime animations:^{
-        self.HB_Y -= rect.size.height;
+        self.HB_Y = [UIScreen mainScreen].bounds.size.height - rect.size.height - self.HB_H;
     }];
+    
 }
 - (void)keyBoardWillHide:(NSNotification *)info{
-    if (self.HB_Y + 258 >= [UIScreen mainScreen].bounds.size.height) return;
+    
     NSDictionary *dic = info.userInfo;
     NSTimeInterval showTime = [[dic objectForKey:@"UIKeyboardAnimationDurationUserInfoKey"] floatValue];
-    CGRect rect = [[dic objectForKey:@"UIKeyboardFrameEndUserInfoKey"] CGRectValue];
+
+    if (self.HB_Y == [UIScreen mainScreen].bounds.size.height - self.HB_H) {
+        return;
+    }
     [UIView animateWithDuration:showTime animations:^{
-        self.HB_Y += rect.size.height;
+        self.HB_Y = [UIScreen mainScreen].bounds.size.height - self.HB_H;
     }];
+    
 }
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
     if ([keyPath isEqualToString:@"frame"]) {
@@ -268,6 +284,22 @@ static CGFloat textViewY = 5;
     }else if ([keyPath isEqualToString:@"attributedText"]){
         
         [self caclulaterTextViewHeight];
+        
+    }else if ([keyPath isEqualToString:@"inputView"]) {
+    
+        HBEmjoyView *emjoyView = [change objectForKey:@"new"];
+
+        [UIView animateWithDuration:0.25 animations:^{
+                
+            CGFloat moveHeight = ((NSNull *)emjoyView == [NSNull null]) ? 258 : emjoyView.HB_H;
+            
+            self.HB_Y = [UIScreen mainScreen].bounds.size.height - moveHeight - self.HB_H;
+        }];
+        
+    }else{
+        
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        
     }
 }
 - (void)textViewTextChange:(NSNotification *)info{
@@ -317,8 +349,8 @@ static CGFloat textViewY = 5;
             switch (chickBtn.stauts) {
                 case ActionStatusNormal:
                 {
+
                     //变键盘图标，textView变语音说话
-                    
                     chickBtn.stauts = ActionStatusOther;
                     
                     //跟表情互斥,只要语音就重置表情
@@ -330,11 +362,18 @@ static CGFloat textViewY = 5;
                     weakSelf.selectBtn = chickBtn;
                     weakSelf.pressVoiceBtn.hidden = NO;
                     if (weakSelf.textView.isFirstResponder) {
-                        [weakSelf.textView resignFirstResponder];
+                        [weakSelf.textView resignFirstResponder];//willhidden
                     }
                     if (weakSelf.textView.inputView) {
-                        weakSelf.textView.inputView = nil;
+                        weakSelf.textView.inputView = nil;//keyObsever
                     }
+                    
+                    [UIView animateWithDuration:0.25 animations:^{
+                        
+                        weakSelf.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - chatViewH, [UIScreen mainScreen].bounds.size.width, chatViewH);
+                        weakSelf.textView.frame = [weakSelf originTextViewFrame];
+                        
+                    }];
                 }
                     break;
                 case ActionStatusSelect:
@@ -345,10 +384,19 @@ static CGFloat textViewY = 5;
                     weakSelf.selectBtn = chickBtn;
                     [weakSelf.textView resignFirstResponder];
                     weakSelf.pressVoiceBtn.hidden = NO;
+                    
+                    [UIView animateWithDuration:0.25 animations:^{
+                        
+                        weakSelf.frame = CGRectMake(0, [UIScreen mainScreen].bounds.size.height - chatViewH, [UIScreen mainScreen].bounds.size.width, chatViewH);
+                        weakSelf.textView.frame = [weakSelf originTextViewFrame];
+                        
+                    }];
+                    
                 }
                     break;
                 case ActionStatusOther:
                 {
+                    
                     //变语音图标，textView变输入文字
                     chickBtn.stauts = ActionStatusSelect;
                     
@@ -356,6 +404,15 @@ static CGFloat textViewY = 5;
                     weakSelf.selectBtn = nil;
                     [weakSelf.textView becomeFirstResponder];
                     weakSelf.pressVoiceBtn.hidden = YES;
+                    
+                    if (self.textView.attributedText.length > 0) {
+                        
+                        [UIView animateWithDuration:0.25 animations:^{
+                            weakSelf.textView.frame = _lastTextViewFrame;
+                            weakSelf.frame = _lastButtomFrame;
+                        }];
+                        
+                    }
                 }
                     break;
                     
@@ -364,7 +421,7 @@ static CGFloat textViewY = 5;
             }
             
         }];
-//        _voiceBtn.backgroundColor = [UIColor redColor];
+
     }
     return _voiceBtn;
 }
@@ -380,11 +437,10 @@ static CGFloat textViewY = 5;
         [_emjoyBtn addAction:^(HBButton *chickBtn) {
             
             switch (chickBtn.stauts) {
-                case ActionStatusNormal:
-                {
+                case ActionStatusNormal:{
                     chickBtn.stauts = ActionStatusOther;
                     
-                    //跟语音互斥,只要表情就重置语音
+                    //跟语音互斥,只要是表情就重置语音
                     voiceButton.stauts = ActionStatusNormal;
                     voiceButton.selected = NO;
                     
@@ -396,34 +452,25 @@ static CGFloat textViewY = 5;
                     weakSelf.textView.inputView = weakSelf.putView;
                     [weakSelf.textView reloadInputViews];
                     
-                    if (!weakSelf.textView.isFirstResponder)
-                        [weakSelf.textView becomeFirstResponder];
+                    [weakSelf.textView becomeFirstResponder];
                     
                     if (!weakSelf.pressVoiceBtn.hidden) {
                         weakSelf.pressVoiceBtn.hidden = YES;
                     }
-//                    [UIView animateWithDuration:0.25 animations:^{
-//                        weakSelf.HB_Y = [UIScreen mainScreen].bounds.size.height - weakSelf.putView.HB_H - weakSelf.HB_H;
-//                    }];
+                
                 }
                     break;
-                case ActionStatusOther:
-                {
+                case ActionStatusOther:{
                     chickBtn.stauts = ActionStatusNormal;
                     
                     chickBtn.selected = NO;
                     weakSelf.selectBtn = nil;
                     weakSelf.textView.inputView = nil;
                     [weakSelf.textView reloadInputViews];
-
-//                    [UIView animateWithDuration:0.25 animations:^{
-//                        weakSelf.HB_Y = 365;
-//                    }];
-                    
+                    [weakSelf.textView becomeFirstResponder];
                 }
                     break;
-                case ActionStatusSelect:
-                {
+                case ActionStatusSelect:{
                     
                 }
                     break;
@@ -436,11 +483,9 @@ static CGFloat textViewY = 5;
     }
     return _emjoyBtn;
 }
-- (HBButton *)addBtn
-{
+- (HBButton *)addBtn{
     if (!_addBtn) {
         _addBtn = [HBButton buttonFrame:CGRectMake(CGRectGetMaxX(self.emjoyBtn.frame) + 5, 0, self.HB_H, self.HB_H)];
-//        _addBtn.backgroundColor = [UIColor purpleColor];
         [_addBtn setNormalImage:[UIImage imageNamed:@"chat_bottom_up_nor"] selectImage:nil];
         __weak typeof(self) weakSelf = self;
         [_addBtn addAction:^(HBButton *chickBtn) {
@@ -468,6 +513,8 @@ static CGFloat textViewY = 5;
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [self.textView removeObserver:self forKeyPath:@"attributedText"];
+    [self.textView removeObserver:self forKeyPath:@"inputView"];
     [self removeObserver:self forKeyPath:@"frame"];
+    
 }
 @end
