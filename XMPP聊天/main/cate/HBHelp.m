@@ -9,6 +9,7 @@
 #import "HBHelp.h"
 #import <CoreText/CoreText.h>
 #import <AVFoundation/AVFoundation.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @implementation HBHelp
 
@@ -79,6 +80,13 @@
     
     AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
     if (authStatus == AVAuthorizationStatusRestricted || authStatus ==AVAuthorizationStatusDenied){
+        return NO;
+    }
+    return YES;
+}
++ (BOOL)albumEnable{
+    ALAuthorizationStatus author = [ALAssetsLibrary authorizationStatus];
+    if (author == AVAuthorizationStatusRestricted || author == AVAuthorizationStatusDenied){
         return NO;
     }
     return YES;
