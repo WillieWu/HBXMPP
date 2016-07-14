@@ -8,10 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+typedef void(^MicrophoneBlock)(BOOL microphoneEnable);
+
 @interface HBHelp : NSObject
 
 + (CGSize)HB_boundsSize:(CGSize)size textFont:(UIFont *)textFont contentText:(NSString *)contentText;
 + (CGSize)HB_attributeBoundsSize:(CGSize)size attributeContentText:(NSMutableAttributedString *)attributeContentText;
 + (CGSize)HB_sizeForAttributeString:(NSAttributedString *)attributeString size:(CGSize)size;
 + (NSString *)currentdate;
+/**
+ *  相机是否可用
+ */
++ (BOOL)cameraEnable;
+/**
+ *  麦克风是否可用
+ */
++ (void)MicrophoneEnable:(MicrophoneBlock)mBlcok;
 @end

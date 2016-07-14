@@ -404,7 +404,7 @@ static CGFloat textViewY = 5;
                     weakSelf.selectBtn = nil;
                     [weakSelf.textView becomeFirstResponder];
                     weakSelf.pressVoiceBtn.hidden = YES;
-                    
+#warning 解决含有表情时，frame错误
                     if (self.textView.attributedText.length > 0) {
                         
                         [UIView animateWithDuration:0.25 animations:^{

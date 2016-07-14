@@ -8,6 +8,7 @@
 
 #import "HBHelp.h"
 #import <CoreText/CoreText.h>
+#import <AVFoundation/AVFoundation.h>
 
 @implementation HBHelp
 
@@ -73,5 +74,29 @@
     NSString *  locationString =[dateformatter stringFromDate:senddate];
     
     return locationString;
+}
++ (BOOL)cameraEnable{
+    
+    AVAuthorizationStatus authStatus = [AVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo];
+    if (authStatus == AVAuthorizationStatusRestricted || authStatus ==AVAuthorizationStatusDenied){
+        return NO;
+    }
+    return YES;
+}
++ (void)MicrophoneEnable:(MicrophoneBlock)mBlcok{
+    
+    if ([[AVAudioSession sharedInstance] respondsToSelector:@selector(requestRecordPermission:)]) {
+        [[AVAudioSession sharedInstance] performSelector:@selector(requestRecordPermission:) withObject:^(BOOL granted) {
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+            
+                if (mBlcok) {
+                    mBlcok(granted);
+                }
+                
+            });
+            
+        }];
+    }
 }
 @end
