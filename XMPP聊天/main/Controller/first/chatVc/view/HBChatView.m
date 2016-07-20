@@ -117,9 +117,9 @@ static CGFloat textViewY = 5;
         CGFloat getSysHeight = [self.textView sizeThatFits:CGSizeMake(self.textView.HB_W, MAXFLOAT)].height;
         CGFloat getHeight = [HBHelp HB_attributeBoundsSize:CGSizeMake(self.textView.HB_W, MAXFLOAT)
                   attributeContentText:[[context HB_StringToChatAttributeString] mutableCopy]].height;
-        whbLog(@"++++++++++++++++ 开始 ++++++++++++++++++");
-    
-        whbLog(@"myHeight :%@ - sysHeight :%@",@(getHeight),@(getSysHeight));
+//        whbLog(@"++++++++++++++++ 开始 ++++++++++++++++++");
+//    
+//        whbLog(@"myHeight :%@ - sysHeight :%@",@(getHeight),@(getSysHeight));
         if (getHeight <= _originaTextViewH) {
             
             self.textView.HB_H = _originaTextViewH;
@@ -131,14 +131,14 @@ static CGFloat textViewY = 5;
             }
             self.textView.HB_H = getHeight;
         }
-        whbLog(@"caclulaterTextViewHeight :%@",NSStringFromCGRect(self.frame));
+//        whbLog(@"caclulaterTextViewHeight :%@",NSStringFromCGRect(self.frame));
         
         self.HB_H = self.textView.HB_H + self.textView.HB_Y * 2;
         self.HB_Y -= self.HB_H - _lastH;
         //2.始终更新最后的状态
         [self layoutIfNeeded];
         
-        whbLog(@"layoutIfNeeded : %@",NSStringFromCGRect(self.frame));
+//        whbLog(@"layoutIfNeeded : %@",NSStringFromCGRect(self.frame));
         _lastButtomFrame = self.frame;
         _lastTextViewFrame = self.textView.frame;
         
