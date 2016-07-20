@@ -20,6 +20,9 @@ typedef void(^MicrophoneBlock)(BOOL microphoneEnable);
  *  相机是否可用
  */
 + (BOOL)cameraEnable;
+/**
+ *  相册是否可用
+ */
 + (BOOL)albumEnable;
 /**
  *  麦克风是否可用

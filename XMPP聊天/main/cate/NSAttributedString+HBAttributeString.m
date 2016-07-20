@@ -25,10 +25,9 @@
               }else{
                   NSAttributedString *aStr = [self attributedSubstringFromRange:range];
                   
-                  
                   [chatStr appendString:aStr.string];
               }
     }];
-    return (NSString *)chatStr;
+    return [chatStr copy];
 }
 @end

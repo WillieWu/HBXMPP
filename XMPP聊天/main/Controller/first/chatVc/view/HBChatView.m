@@ -117,7 +117,9 @@ static CGFloat textViewY = 5;
         CGFloat getSysHeight = [self.textView sizeThatFits:CGSizeMake(self.textView.HB_W, MAXFLOAT)].height;
         CGFloat getHeight = [HBHelp HB_attributeBoundsSize:CGSizeMake(self.textView.HB_W, MAXFLOAT)
                   attributeContentText:[[context HB_StringToChatAttributeString] mutableCopy]].height;
-        
+        whbLog(@"++++++++++++++++ 开始 ++++++++++++++++++");
+    
+        whbLog(@"myHeight :%@ - sysHeight :%@",@(getHeight),@(getSysHeight));
         if (getHeight <= _originaTextViewH) {
             
             self.textView.HB_H = _originaTextViewH;
@@ -128,18 +130,20 @@ static CGFloat textViewY = 5;
                 getHeight = _originaButtomViewH * 2;
             }
             self.textView.HB_H = getHeight;
-            whbLog(@"caclulaterTextViewHeight :%@ - %@",@(getHeight),@(getSysHeight));
         }
+        whbLog(@"caclulaterTextViewHeight :%@",NSStringFromCGRect(self.frame));
         
         self.HB_H = self.textView.HB_H + self.textView.HB_Y * 2;
         self.HB_Y -= self.HB_H - _lastH;
         //2.始终更新最后的状态
         [self layoutIfNeeded];
         
+        whbLog(@"layoutIfNeeded : %@",NSStringFromCGRect(self.frame));
         _lastButtomFrame = self.frame;
         _lastTextViewFrame = self.textView.frame;
         
     }
+    
 }
 - (void)sendMessage{
     NSString *getChatStr = [self.textView.attributedText HB_ChatAttributeStringToString];
@@ -402,17 +406,21 @@ static CGFloat textViewY = 5;
                     
                     chickBtn.selected = NO;
                     weakSelf.selectBtn = nil;
-                    [weakSelf.textView becomeFirstResponder];
-                    weakSelf.pressVoiceBtn.hidden = YES;
-#warning 解决含有表情时，frame错误
+                    
                     if (self.textView.attributedText.length > 0) {
-                        
+                        //                        whbLog(@"ActionStatusOther : %@",NSStringFromCGRect(_lastButtomFrame));
                         [UIView animateWithDuration:0.25 animations:^{
+                            
                             weakSelf.textView.frame = _lastTextViewFrame;
                             weakSelf.frame = _lastButtomFrame;
                         }];
                         
                     }
+                    
+                    [weakSelf.textView becomeFirstResponder];
+                    weakSelf.pressVoiceBtn.hidden = YES;
+
+                    
                 }
                     break;
                     
@@ -449,14 +457,19 @@ static CGFloat textViewY = 5;
                     chickBtn.selected = YES;
                     weakSelf.selectBtn = chickBtn;
                     
+                    if (!weakSelf.pressVoiceBtn.hidden) {
+                        weakSelf.pressVoiceBtn.hidden = YES;
+                        [UIView animateWithDuration:0.25 animations:^{
+                            
+                            weakSelf.textView.frame = _lastTextViewFrame;
+                            weakSelf.frame = _lastButtomFrame;
+                        }];
+                    }
+                    
                     weakSelf.textView.inputView = weakSelf.putView;
                     [weakSelf.textView reloadInputViews];
                     
                     [weakSelf.textView becomeFirstResponder];
-                    
-                    if (!weakSelf.pressVoiceBtn.hidden) {
-                        weakSelf.pressVoiceBtn.hidden = YES;
-                    }
                 
                 }
                     break;
@@ -489,9 +502,11 @@ static CGFloat textViewY = 5;
         [_addBtn setNormalImage:[UIImage imageNamed:@"chat_bottom_up_nor"] selectImage:nil];
         __weak typeof(self) weakSelf = self;
         [_addBtn addAction:^(HBButton *chickBtn) {
-            weakSelf.selectBtn.selected = NO;
-            chickBtn.selected = YES;
-            weakSelf.selectBtn = chickBtn;
+            
+            whbLog(@"你点了添加按钮!!!");
+//            weakSelf.selectBtn.selected = NO;
+//            chickBtn.selected = YES;
+//            weakSelf.selectBtn = chickBtn;
             
         }];
     }
