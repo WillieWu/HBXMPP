@@ -353,10 +353,8 @@ static CGFloat textViewY = 5;
             switch (chickBtn.stauts) {
                 case ActionStatusNormal:
                 {
-
                     //变键盘图标，textView变语音说话
                     chickBtn.stauts = ActionStatusOther;
-                    
                     //跟表情互斥,只要语音就重置表情
                     emjoyButton.selected = NO;
                     emjoyButton.stauts = ActionStatusNormal;
