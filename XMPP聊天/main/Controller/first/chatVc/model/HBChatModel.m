@@ -18,7 +18,7 @@
     
     CGSize getChatBgSize;
 
-    if ([message.messageStr isEqualToString:HBTypeText]){
+    if ([message.messageStr isEqualToString:HBTypeText]){//聊天文字内容
 
         //聊天，表情字符串
         self.chatContent = [message.body HB_StringToChatAttributeString];
@@ -29,15 +29,15 @@
         
         getChatBgSize = CGSizeMake(size.width + 2 * padding, size.height);
     
-    }else if ([message.messageStr isEqualToString:HBTypeImage]){
+    }else if ([message.messageStr isEqualToString:HBTypeImage]){//图片
             
         self.imageSize = CGSizeMake(120, 60);
         
         getChatBgSize = CGSizeMake(self.imageSize.width + 2 * padding, self.imageSize.height + 2 * padding);
         
-    }else if ([message.messageStr isEqualToString:HBTypeVoice]){
+    }else if ([message.messageStr isEqualToString:HBTypeVoice]){//语音
         
-    }else if ([message.messageStr isEqualToString:HBTypeMap]){
+    }else if ([message.messageStr isEqualToString:HBTypeMap]){//地图
         
     }
     

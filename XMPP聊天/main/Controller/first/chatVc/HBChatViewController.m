@@ -42,7 +42,6 @@
 
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         
-
         NSManagedObjectContext *context = [XMPPMessageArchivingCoreDataStorage sharedInstance].mainThreadManagedObjectContext;
         NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"XMPPMessageArchiving_Message_CoreDataObject"];
         NSString *userinfo = [NSString stringWithFormat:@"%@@%@",HBXMPPMananger.xmppStream.myJID.user,HBXMPPHostName];

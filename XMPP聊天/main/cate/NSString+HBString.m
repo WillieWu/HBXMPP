@@ -22,14 +22,15 @@
                                                                         error:nil];
     });
    
-    NSMutableArray *marray = [NSMutableArray array];
-    NSMutableString *mStr = [[NSMutableString alloc] initWithString:self];
+    NSMutableAttributedString *AttributeString = [[NSMutableAttributedString alloc] initWithString:self];
+    
+    [AttributeString setAttributes:@{NSFontAttributeName : chatTextFont}
+                             range:NSMakeRange(0, AttributeString.length)];
 
     NSArray *array = [regularExpression matchesInString:self options:NSMatchingReportCompletion range:NSMakeRange(0, self.length)];
     
-    for (NSInteger z = 0; z < array.count; z++) {
-        
-        NSTextCheckingResult *result = array[z];
+    
+    [array enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSTextCheckingResult *result, NSUInteger idx, BOOL * _Nonnull stop) {
         
         NSString *emjoyStr = [self substringWithRange:result.range];//[/001]
         
@@ -39,37 +40,15 @@
         
         NSString *emjoyName = [emjoyStr substringWithRange:NSMakeRange(loc, len - loc)];//001
         
-        NSRange fixRange = NSMakeRange(result.range.location - z * (result.range.length - 1), result.range.length);
-        
         HBTextAttachment *textAtt = [HBTextAttachment new];
         textAtt.emjoysName = emjoyName;
-        textAtt.range = NSMakeRange(fixRange.location, 1);
         UIImage *image = [UIImage imageNamed:textAtt.emjoysName];
-        if (image == nil) {
-            continue;
-        }
         textAtt.image = image;
         
-        [marray addObject:textAtt];
+        NSAttributedString *imageAttribute = [NSAttributedString attributedStringWithAttachment:textAtt];
+        [AttributeString replaceCharactersInRange:result.range withAttributedString:imageAttribute];
         
-        [mStr replaceCharactersInRange:fixRange withString:@" "];
-        //        whbLog(@"%@ - %@ - %@",NSStringFromRange(result.range),NSStringFromRange(fixRange),self);
-        
-    }
-   
-    NSMutableAttributedString *AttributeString = [[NSMutableAttributedString alloc] initWithString:mStr];
-    
-    [AttributeString setAttributes:@{
-                                     NSFontAttributeName : chatTextFont,
-                                     
-                                     }
-                             range:NSMakeRange(0, AttributeString.length)];
-    for (NSInteger i = 0; i < marray.count; i++) {
-        HBTextAttachment *textAttachment = marray[i];
-        NSAttributedString *imageAttribute = [NSAttributedString attributedStringWithAttachment:textAttachment];
-        [AttributeString replaceCharactersInRange:textAttachment.range withAttributedString:imageAttribute];
-    }
-    
+    }];
     return AttributeString;
     
 }
