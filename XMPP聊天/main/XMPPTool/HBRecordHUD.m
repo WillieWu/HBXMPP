@@ -10,6 +10,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "HBHelp.h"
 
+
 @interface HBRecordHUD()<AVAudioPlayerDelegate>
 {
     AVAudioRecorder *_recorder;//录音
@@ -23,6 +24,7 @@
 @property (nonatomic, strong) NSMutableDictionary *setting;
 @property (nonatomic, strong) UIImageView *statuImageView;
 @property (nonatomic, assign) recordStatus status;
+@property (nonatomic, copy) playCompletionBlcok completion;
 @end
 
 
@@ -79,6 +81,8 @@ static HBRecordHUD *recordHUD = nil;
     
     [[NSRunLoop mainRunLoop] addTimer:self.tm forMode:NSRunLoopCommonModes];
     
+    
+    
 }
 - (void)stopRecord{
     
@@ -90,11 +94,10 @@ static HBRecordHUD *recordHUD = nil;
     }
     
     if (self.tm) {
+        whbLog(@"计时器：%@",@(timerValue));
         [self.tm invalidate];
         self.tm = nil;
     }
-    
-    timerValue = 1.0;
     
     if (_recorder.recording)
         [_recorder stop];
@@ -103,20 +106,26 @@ static HBRecordHUD *recordHUD = nil;
 
 }
 #pragma mark - 播放相关
-- (void)playLocalMusicFileURL:(NSURL *)localURL{
+- (void)playLocalMusicFileURL:(NSURL *)localURL beginPlay:(beginPlayBlcok)beginPlay completion:(playCompletionBlcok)completion{
     
     [self stopPlay];
     
-    if (!localURL) {
-        whbLog(@"路径错误 - 为空！");
+    if (!localURL || [[NSFileManager defaultManager] fileExistsAtPath:[localURL absoluteString]]) {
+        whbLog(@"路径错误 - 路径为空或者文件不存在！");
         return;
     }
-    
+
     _soundPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:localURL error:nil];
     _soundPlayer.delegate = self;
     if ([_soundPlayer prepareToPlay]) {
         
         [_soundPlayer play];
+        
+        if (beginPlay) {
+            beginPlay();
+        }
+        
+        self.completion = completion;
         whbLog(@"开始播放");
     }
 }
@@ -174,7 +183,10 @@ static HBRecordHUD *recordHUD = nil;
 }
 - (BOOL)isTooShortTime
 {
-    if (timerValue > 2) return NO;
+    if (timerValue > 2) {
+        
+        return NO;
+    }
     return YES;
 }
 - (NSString *)lastVoicePath
@@ -256,6 +268,9 @@ static HBRecordHUD *recordHUD = nil;
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
 {
     whbLog(@"播放完成");
+    if (self.completion) {
+        self.completion(flag);
+    }
 }
 #pragma mark - get
 - (CADisplayLink *)link{
@@ -267,6 +282,7 @@ static HBRecordHUD *recordHUD = nil;
 - (NSTimer *)tm{
     if (!_tm) {
         _tm = [NSTimer scheduledTimerWithTimeInterval:timeInterval target:self selector:@selector(timestar:) userInfo:nil repeats:YES];
+        timerValue = 1.0;
     }
     return _tm;
 }

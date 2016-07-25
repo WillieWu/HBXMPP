@@ -26,6 +26,11 @@
 		5E1401841C229E7600B2F65E /* HBEmjoyCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E1401821C229E7600B2F65E /* HBEmjoyCollectionViewCell.m */; };
 		5E1401851C229E7600B2F65E /* HBEmjoyCollectionViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 5E1401831C229E7600B2F65E /* HBEmjoyCollectionViewCell.xib */; };
 		5E1401891C22A35500B2F65E /* HBCollectionViewFlowLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E1401881C22A35500B2F65E /* HBCollectionViewFlowLayout.m */; };
+		5E2289F81D45FE2400A18258 /* XMPP_ChatDB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5E2289F61D45FE2400A18258 /* XMPP_ChatDB.xcdatamodeld */; };
+		5E228A031D46019800A18258 /* ChatFriends+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A001D46019800A18258 /* ChatFriends+CoreDataProperties.m */; };
+		5E228A041D46019800A18258 /* ChatFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A021D46019800A18258 /* ChatFriends.m */; };
+		5E228A4B1D46131700A18258 /* ChatMessage+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A481D46131700A18258 /* ChatMessage+CoreDataProperties.m */; };
+		5E228A4C1D46131700A18258 /* ChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A4A1D46131700A18258 /* ChatMessage.m */; };
 		5E36A1CB1C181B4B004BFCBA /* HBFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E36A1CA1C181B4B004BFCBA /* HBFirstViewController.m */; };
 		5E36A1CF1C181B61004BFCBA /* HBTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E36A1CE1C181B61004BFCBA /* HBTwoViewController.m */; };
 		5E4EE1EB1C23EC4D00607EBC /* HBBaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EE1EA1C23EC4D00607EBC /* HBBaseTableViewCell.m */; };
@@ -391,6 +396,15 @@
 		5E1401831C229E7600B2F65E /* HBEmjoyCollectionViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HBEmjoyCollectionViewCell.xib; sourceTree = "<group>"; };
 		5E1401871C22A35500B2F65E /* HBCollectionViewFlowLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBCollectionViewFlowLayout.h; sourceTree = "<group>"; };
 		5E1401881C22A35500B2F65E /* HBCollectionViewFlowLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBCollectionViewFlowLayout.m; sourceTree = "<group>"; };
+		5E2289F71D45FE2400A18258 /* XMPP_ChatDB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = XMPP_ChatDB.xcdatamodel; sourceTree = "<group>"; };
+		5E2289FF1D46019800A18258 /* ChatFriends+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ChatFriends+CoreDataProperties.h"; sourceTree = "<group>"; };
+		5E228A001D46019800A18258 /* ChatFriends+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ChatFriends+CoreDataProperties.m"; sourceTree = "<group>"; };
+		5E228A011D46019800A18258 /* ChatFriends.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatFriends.h; sourceTree = "<group>"; };
+		5E228A021D46019800A18258 /* ChatFriends.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatFriends.m; sourceTree = "<group>"; };
+		5E228A471D46131700A18258 /* ChatMessage+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ChatMessage+CoreDataProperties.h"; sourceTree = "<group>"; };
+		5E228A481D46131700A18258 /* ChatMessage+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ChatMessage+CoreDataProperties.m"; sourceTree = "<group>"; };
+		5E228A491D46131700A18258 /* ChatMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessage.h; sourceTree = "<group>"; };
+		5E228A4A1D46131700A18258 /* ChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessage.m; sourceTree = "<group>"; };
 		5E36A1C91C181B4B004BFCBA /* HBFirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBFirstViewController.h; sourceTree = "<group>"; };
 		5E36A1CA1C181B4B004BFCBA /* HBFirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBFirstViewController.m; sourceTree = "<group>"; };
 		5E36A1CD1C181B61004BFCBA /* HBTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBTwoViewController.h; sourceTree = "<group>"; };
@@ -2201,8 +2215,17 @@
 		5EF8EE561C1FE5D700E1AA1A /* DB */ = {
 			isa = PBXGroup;
 			children = (
+				5E228A471D46131700A18258 /* ChatMessage+CoreDataProperties.h */,
+				5E228A481D46131700A18258 /* ChatMessage+CoreDataProperties.m */,
+				5E228A491D46131700A18258 /* ChatMessage.h */,
+				5E228A4A1D46131700A18258 /* ChatMessage.m */,
+				5E2289FF1D46019800A18258 /* ChatFriends+CoreDataProperties.h */,
+				5E228A001D46019800A18258 /* ChatFriends+CoreDataProperties.m */,
+				5E228A011D46019800A18258 /* ChatFriends.h */,
+				5E228A021D46019800A18258 /* ChatFriends.m */,
 				5EF8EE571C1FE60C00E1AA1A /* HBXMPPCoreDataManager.h */,
 				5EF8EE581C1FE60C00E1AA1A /* HBXMPPCoreDataManager.m */,
+				5E2289F61D45FE2400A18258 /* XMPP_ChatDB.xcdatamodeld */,
 			);
 			path = DB;
 			sourceTree = "<group>";
@@ -2560,8 +2583,10 @@
 				5EA848D41C1584D600997CB0 /* XMPPCapsCoreDataStorageObject.m in Sources */,
 				5EA848EB1C1584D600997CB0 /* XEP_0223.m in Sources */,
 				5E62000D1CB4E86C00347E29 /* HBLable.m in Sources */,
+				5E228A4C1D46131700A18258 /* ChatMessage.m in Sources */,
 				5EA848AF1C1584D600997CB0 /* XMPPRoomMessageHybridCoreDataStorageObject.m in Sources */,
 				5EA848C21C1584D600997CB0 /* XMPPvCardTempModule.m in Sources */,
+				5E228A031D46019800A18258 /* ChatFriends+CoreDataProperties.m in Sources */,
 				5EA848A01C1584D600997CB0 /* XMPPUserMemoryStorageObject.m in Sources */,
 				5EA8491C1C15864200997CB0 /* XMPPModule.m in Sources */,
 				5EA848E11C1584D600997CB0 /* XMPPMessageDeliveryReceipts.m in Sources */,
@@ -2598,6 +2623,7 @@
 				5EA8475E1C15849E00997CB0 /* GCDAsyncSocket.m in Sources */,
 				5EA848DA1C1584D600997CB0 /* XMPPMessageArchivingCoreDataStorage.m in Sources */,
 				5EA848D81C1584D600997CB0 /* XMPPMessageArchiving_Contact_CoreDataObject.m in Sources */,
+				5E228A4B1D46131700A18258 /* ChatMessage+CoreDataProperties.m in Sources */,
 				5EA848B91C1584D600997CB0 /* XMPPvCardCoreDataStorage.m in Sources */,
 				5E09C1121C167ECF00A789B5 /* XMPPIDTracker.m in Sources */,
 				5EA849171C15864200997CB0 /* XMPPConstants.m in Sources */,
@@ -2617,6 +2643,7 @@
 				5EA848E21C1584D600997CB0 /* XMPPBlocking.m in Sources */,
 				5EA8478C1C1584BB00997CB0 /* DDXMLNode.m in Sources */,
 				5EA848C11C1584D600997CB0 /* XMPPvCardTempLabel.m in Sources */,
+				5E2289F81D45FE2400A18258 /* XMPP_ChatDB.xcdatamodeld in Sources */,
 				5EA847741C1584A600997CB0 /* DDASLLogger.m in Sources */,
 				5EA848EC1C1584D600997CB0 /* XMPPAttentionModule.m in Sources */,
 				5EA848BC1C1584D600997CB0 /* XMPPvCardTemp.m in Sources */,
@@ -2697,6 +2724,7 @@
 				5EA848A41C1584D600997CB0 /* XMPPIQ+JabberRPCResonse.m in Sources */,
 				5EA848C91C1584D600997CB0 /* XMPPIQ+XEP_0066.m in Sources */,
 				5EA847781C1584A600997CB0 /* DDContextFilterLogFormatter.m in Sources */,
+				5E228A041D46019800A18258 /* ChatFriends.m in Sources */,
 				5EA848B11C1584D600997CB0 /* XMPPRoomMemoryStorage.m in Sources */,
 				5EA848AC1C1584D600997CB0 /* XMPPRoomOccupantCoreDataStorageObject.m in Sources */,
 				5EA847761C1584A600997CB0 /* DDLog.m in Sources */,
@@ -3011,6 +3039,16 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
+		5E2289F61D45FE2400A18258 /* XMPP_ChatDB.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5E2289F71D45FE2400A18258 /* XMPP_ChatDB.xcdatamodel */,
+			);
+			currentVersion = 5E2289F71D45FE2400A18258 /* XMPP_ChatDB.xcdatamodel */;
+			path = XMPP_ChatDB.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		5EA847D11C1584D600997CB0 /* XMPPRoom.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (

@@ -34,11 +34,11 @@
 {
     [super setChatModel:chatModel];
     
-    NSRange range = [chatModel.message.body rangeOfString:HBImageString];
+    NSRange range = [chatModel.message.chatBody rangeOfString:HBImageString];
     
     if (range.location == NSNotFound) return;
     
-    NSString *picURL = [chatModel.message.body substringFromIndex:range.location + range.length];
+    NSString *picURL = [chatModel.message.chatBody substringFromIndex:range.location + range.length];
     
     [self.imageContent HB_setImageURL:[NSURL URLWithString:picURL]];
 

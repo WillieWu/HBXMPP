@@ -7,11 +7,13 @@
 //
 
 #import "HBChatViewController.h"
-#import "XMPPMessageArchivingCoreDataStorage.h"
+#import "ChatMessage.h"
 #import "HBBaseTableViewCell.h"
 #import "HBChatView.h"
 #import "HBChatModel.h"
 #import "HBChatTableView.h"
+#import "HBXMPPCoreDataManager.h"
+
 @import MJRefresh;
 
 
@@ -42,8 +44,7 @@
 
     self.tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         
-        NSManagedObjectContext *context = [XMPPMessageArchivingCoreDataStorage sharedInstance].mainThreadManagedObjectContext;
-        NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"XMPPMessageArchiving_Message_CoreDataObject"];
+        NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"ChatMessage"];
         NSString *userinfo = [NSString stringWithFormat:@"%@@%@",HBXMPPMananger.xmppStream.myJID.user,HBXMPPHostName];
         NSString *friendinfo = [NSString stringWithFormat:@"%@@%@",self.title,HBXMPPHostName];
         HBChatModel *chatModel = [self.chatContents firstObject];
@@ -55,11 +56,11 @@
         request.sortDescriptors = @[sort];
         request.fetchLimit = 10;
         
-        NSArray *array = [context executeFetchRequest:request error:nil];
+        NSArray *array = [[HBXMPPCoreDataManager manager].mainContext executeFetchRequest:request error:nil];
         
         dispatch_async(dispatch_get_global_queue(0, 0), ^{
             
-            [array enumerateObjectsUsingBlock:^(XMPPMessageArchiving_Message_CoreDataObject *msg, NSUInteger idx, BOOL * _Nonnull stop) {
+            [array enumerateObjectsUsingBlock:^(ChatMessage *msg, NSUInteger idx, BOOL * _Nonnull stop) {
                 
                 HBChatModel *chatModel = [HBChatModel new];
                 chatModel.message = msg;
@@ -84,22 +85,11 @@
 
 }
 
-//与某个好友聊天
-- (BOOL)talkToFriend:(NSString *)friendsName andMsg:(NSString *)msg
-{
-    XMPPJID *toFriend = [XMPPJID jidWithUser:friendsName domain:HBXMPPHostName resource:nil];
-    XMPPMessage * message = [[XMPPMessage alloc] initWithType:@"chat" to:toFriend];
-    [message addBody:msg];
-
-    [HBXMPPMananger.xmppStream sendElement:message];
-    return YES;
-}
 //获得聊天记录
 - (void)getRecords
 {
    
-    NSManagedObjectContext *context = [XMPPMessageArchivingCoreDataStorage sharedInstance].mainThreadManagedObjectContext;
-    NSFetchRequest *request = [[NSFetchRequest alloc] initWithEntityName:@"XMPPMessageArchiving_Message_CoreDataObject"];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"ChatMessage"];
     NSString *userinfo = [NSString stringWithFormat:@"%@@%@",HBXMPPMananger.xmppStream.myJID.user,HBXMPPHostName];
     NSString *friendinfo = [NSString stringWithFormat:@"%@@%@",self.title,HBXMPPHostName];
     NSPredicate *predicate =
@@ -109,7 +99,7 @@
     NSSortDescriptor * sort = [NSSortDescriptor sortDescriptorWithKey:@"timestamp" ascending:NO];
     request.sortDescriptors = @[sort];
     
-    _msgFetchResult = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:context sectionNameKeyPath:nil cacheName:nil];
+    _msgFetchResult = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[HBXMPPCoreDataManager manager].mainContext sectionNameKeyPath:nil cacheName:nil];
     _msgFetchResult.delegate = self;
     
     NSError *error = nil;
@@ -117,25 +107,21 @@
         whbLog(@"chat message error - %@",error);
     }
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-       
-        [_msgFetchResult.fetchedObjects enumerateObjectsUsingBlock:^(XMPPMessageArchiving_Message_CoreDataObject *msg, NSUInteger idx, BOOL * _Nonnull stop) {
-            
-            HBChatModel *chatModel = [HBChatModel new];
-            chatModel.message = msg;
-            [self.chatContents insertObject:chatModel atIndex:0];
-            
-        }];
+    [_msgFetchResult.fetchedObjects enumerateObjectsUsingBlock:^(ChatMessage *msg, NSUInteger idx, BOOL * _Nonnull stop) {
         
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self.tableView reloadData];
-            
-            if (_msgFetchResult.fetchedObjects.count)
-                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_msgFetchResult.fetchedObjects.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
-        });
+        HBChatModel *chatModel = [HBChatModel new];
+        chatModel.message = msg;
+        [self.chatContents insertObject:chatModel atIndex:0];
         
-    });
+    }];
+    
+    [self.tableView reloadData];
+    
+    if (_msgFetchResult.fetchedObjects.count)
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_msgFetchResult.fetchedObjects.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
+    
+        
+    
     
     
 }
@@ -148,7 +134,7 @@
 {
     
     HBChatModel *chatModel = self.chatContents[indexPath.row];
-    HBBaseTableViewCell *cell = [HBBaseTableViewCell baseCell:tableView cellType:chatModel.message.messageStr];
+    HBBaseTableViewCell *cell = [HBBaseTableViewCell baseCell:tableView cellType:chatModel.message.chatType];
     cell.chatModel = chatModel;
     
     return cell;
@@ -166,7 +152,7 @@
         case NSFetchedResultsChangeInsert:
         {
             
-            if ([anObject isKindOfClass:[XMPPMessageArchiving_Message_CoreDataObject class]]) {
+            if ([anObject isKindOfClass:[ChatMessage class]]) {
                 
                 HBChatModel *chatModel = [HBChatModel new];
                 
@@ -190,9 +176,24 @@
 }
 
 #pragma mark - HBChatViewDelegate
-- (void)chatView:(HBChatView *)chatView chickSend:(NSString *)content
+- (void)chatView:(HBChatView *)chatView SendText:(NSString *)content
 {
-    [self talkToFriend:self.title andMsg:content];
+    XMPPJID *toFriend = [XMPPJID jidWithUser:self.title domain:HBXMPPHostName resource:nil];
+    XMPPMessage * message = [[XMPPMessage alloc] initWithType:HBTypeText to:toFriend];
+    [message addBody:content];
+    [HBXMPPMananger.xmppStream sendElement:message];
+}
+- (void)chatView:(HBChatView *)chatView SendVoice:(NSString *)voicePath
+{
+    whbLog(@"SendVoice : %@",[voicePath lastPathComponent]);
+    if (voicePath.length > 0) {
+        
+        XMPPJID *toFriend = [XMPPJID jidWithUser:self.title domain:HBXMPPHostName resource:nil];
+        XMPPMessage * message = [[XMPPMessage alloc] initWithType:HBTypeVoice to:toFriend];
+        [message addBody:[voicePath lastPathComponent]];
+        [[HBXMPPCoreDataManager manager] HB_XMPPSaveChatMessage:message isOutGoing:YES];
+        
+    }
 }
 - (void)chatViewDidChangeFrame:(HBChatView *)chatView
 {

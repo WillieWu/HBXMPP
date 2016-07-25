@@ -59,9 +59,9 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self addSubview:self.userIconImage];
-        [self addSubview:self.userIconName];
-        [self addSubview:self.chatBg];
+        [self.contentView addSubview:self.userIconImage];
+        [self.contentView addSubview:self.userIconName];
+        [self.contentView addSubview:self.chatBg];
         
     }
     return self;
@@ -74,7 +74,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
     self.chatBg.HB_Size = self.chatModel.chatBgSize;
     self.userIconName.HB_W = self.userIconName.getWidth;
     
-    if (self.chatModel.message.isOutgoing) {
+    if ([self.chatModel.message.outgoing boolValue]) {
         
         self.userIconImage.HB_X = [UIScreen mainScreen].bounds.size.width - HBMid - HBUserIconImageWH;
         self.userIconImage.image = [UIImage imageNamed:_mineImageName];
@@ -99,7 +99,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
     _chatModel = chatModel;
     
     NSString *from = nil;
-    if (chatModel.message.isOutgoing) {//自己发的
+    if ([chatModel.message.outgoing boolValue]) {//自己发的
         
         from = [NSString stringWithFormat:@"来自：%@",chatModel.message.streamBareJidStr];
     }else{
@@ -113,6 +113,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
 {
     if (!_userIconImage) {
         _userIconImage = [[UIImageView alloc] init];
+        _userIconName.userInteractionEnabled = YES;
         _userIconImage.HB_W = _userIconImage.HB_H = HBUserIconImageWH;
         _userIconImage.HB_Y = HBUserIconImageToTop;
     }
@@ -134,6 +135,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
 {
     if (!_chatBg) {
         _chatBg = [[UIImageView alloc] init];
+        _chatBg.userInteractionEnabled = YES;
         _chatBg.HB_W = HBChatBgMaxWidth;
         _chatBg.HB_H = 80;
         _chatBg.HB_Y = CGRectGetMaxY(self.userIconName.frame) + HBChatBgToUserIconImage;

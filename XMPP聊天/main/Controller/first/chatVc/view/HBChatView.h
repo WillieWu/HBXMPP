@@ -11,7 +11,8 @@
 
 @protocol HBChatViewDelegate <NSObject>
 
-- (void)chatView:(HBChatView *)chatView chickSend:(NSString *)content;
+- (void)chatView:(HBChatView *)chatView SendText:(NSString *)content;
+- (void)chatView:(HBChatView *)chatView SendVoice:(NSString *)voicePath;
 - (void)chatViewDidChangeFrame:(HBChatView *)chatView;
 @end
 

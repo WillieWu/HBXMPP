@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="10171" systemVersion="15B42" minimumToolsVersion="Xcode 7.0">
+    <entity name="ChatFriends" representedClassName="ChatFriends" syncable="YES">
+        <attribute name="bareJidStr" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="ChatMessage" representedClassName="ChatMessage" syncable="YES">
+        <attribute name="bareJidStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="chatBody" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="chatType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="outgoing" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="streamBareJidStr" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="voiceTime" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="ChatMessage" positionX="-54" positionY="-9" width="128" height="150"/>
+        <element name="ChatFriends" positionX="-36" positionY="54" width="128" height="60"/>
+    </elements>
+</model>

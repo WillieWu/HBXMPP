@@ -7,25 +7,38 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XMPPMessageArchiving_Message_CoreDataObject.h"
+#import "ChatMessage.h"
 
 @interface HBChatModel : NSObject
 
-@property (nonatomic, strong) XMPPMessageArchiving_Message_CoreDataObject *message;
+@property (nonatomic, strong) ChatMessage *message;
 /**
  *  内容
  */
 @property (nonatomic, copy) NSAttributedString *chatContent;
 #pragma mark - 文字Frame
 /**
- *  文字大小
+ *  文字
  */
 @property (nonatomic, assign) CGSize textSize;
 #pragma mark - 图片Frame
 /**
- *  图片大小
+ *  图片
  */
 @property (nonatomic, assign) CGSize imageSize;
+#pragma mark - 声音Frame
+/**
+ *  语音
+ */
+@property (nonatomic, assign) CGSize voiceSize;
+/**
+ *  语音时间
+ */
+@property (nonatomic, copy) NSString * voiceTime;
+/**
+ *  语音地址
+ */
+@property (nonatomic, strong) NSURL * voiceURL;
 /**
  *  背景气泡大小
  */

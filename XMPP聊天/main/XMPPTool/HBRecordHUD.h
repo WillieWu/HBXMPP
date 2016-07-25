@@ -14,6 +14,8 @@ typedef NS_ENUM(NSInteger,recordStatus) {
     recordStatusFaile
 
 };
+typedef void(^playCompletionBlcok)(BOOL finished);
+typedef void(^beginPlayBlcok)();
 
 @interface HBRecordHUD : NSObject
 + (instancetype)shareRecordHUD;
@@ -22,7 +24,7 @@ typedef NS_ENUM(NSInteger,recordStatus) {
 - (void)starRecord;
 - (void)stopRecord;
 #pragma mark - 播放相关
-- (void)playLocalMusicFileURL:(NSURL *)localURL;
+- (void)playLocalMusicFileURL:(NSURL *)localURL beginPlay:(beginPlayBlcok)beginPlay completion:(playCompletionBlcok)completion;
 - (void)stopPlay;
 #pragma mark - 展示当前状态
 - (void)showRecordingImageNames:(NSArray *)recordingNames;

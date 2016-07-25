@@ -9,18 +9,15 @@
 #import <Foundation/Foundation.h>
 
 @interface HBXMPPCoreDataManager : NSObject
++ (instancetype)manager;
+@property (nonatomic, strong) NSManagedObjectContext *mainContext;
+@property (nonatomic, strong) NSManagedObjectContext *privateContext;
 /**
  *  存储聊天信息
  *
  *  @param xmppMessage 聊天内容对象
  *  @param isOutGoing  是不是自己发送的
  */
-+ (void)HB_XMPPSaveChatMessage:(XMPPMessage *)xmppMessage isOutGoing:(BOOL)isOutGoing;
-/**
- *  存储好友信息
- *
- *  @param user 好友对象
- */
-+ (void)HB_XMPPSaveRosterWithFrineds:(XMPPUserCoreDataStorageObject *)user;
-+ (BOOL)HB_XMPPFetchUser:(XMPPUserCoreDataStorageObject *)user;
+- (void)HB_XMPPSaveChatMessage:(XMPPMessage *)xmppMessage isOutGoing:(BOOL)isOutGoing;
+
 @end

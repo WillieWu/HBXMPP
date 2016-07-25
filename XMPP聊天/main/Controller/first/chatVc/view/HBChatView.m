@@ -144,8 +144,8 @@ static CGFloat textViewY = 5;
 - (void)sendMessage{
     NSString *getChatStr = [self.textView.attributedText HB_ChatAttributeStringToString];
     
-    if ([self.delegate respondsToSelector:@selector(chatView:chickSend:)]) {
-        [self.delegate chatView:self chickSend:getChatStr];
+    if ([self.delegate respondsToSelector:@selector(chatView:SendText:)]) {
+        [self.delegate chatView:self SendText:getChatStr];
     }
     
     self.textView.text = @"";
@@ -224,6 +224,9 @@ static CGFloat textViewY = 5;
 }
 - (void)canclePress:(HBButton *)btn{
     whbLog(@"取消录音");
+    
+    [[HBRecordHUD shareRecordHUD] stopRecord];
+    
     if ([[HBRecordHUD shareRecordHUD] isTooShortTime]) {
         whbLog(@"时间太短，哥们");
         //展示时间太短提示
@@ -233,9 +236,16 @@ static CGFloat textViewY = 5;
         if ([NSFileManager fileExist:[[HBRecordHUD shareRecordHUD] lastVoicePath]])
             [NSFileManager deleteFile:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
         
+    }else{
+    
+        if ([self.delegate respondsToSelector:@selector(chatView:SendVoice:)]) {
+            
+            [self.delegate chatView:self SendVoice:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
+        }
+        
     }
     
-    [[HBRecordHUD shareRecordHUD] stopRecord];
+    
     
 }
 - (void)TouchUpOutsidePress:(HBButton *)btn{

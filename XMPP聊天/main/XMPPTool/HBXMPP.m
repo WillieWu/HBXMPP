@@ -203,7 +203,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     DDLogInfo(@"%@ - 收到 - %@，消息是：%@ - %@ - %@",sender.myJID.user,message.from.user,message.body, message.type, message.subject);
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        [HBXMPPCoreDataManager HB_XMPPSaveChatMessage:message isOutGoing:NO];
+        [[HBXMPPCoreDataManager manager] HB_XMPPSaveChatMessage:message isOutGoing:NO];
     });
 }
 - (void)xmppStream:(XMPPStream *)sender didSendMessage:(XMPPMessage *)message
@@ -211,7 +211,7 @@ static const int ddLogLevel = LOG_LEVEL_OFF;
     
     DDLogVerbose(@"%@ - 发送 - %@，消息是：%@ - %@ - %@",sender.myJID.user,message.to.user,message.body, message.type, message.subject);
     dispatch_async(dispatch_get_main_queue(), ^{
-        [HBXMPPCoreDataManager HB_XMPPSaveChatMessage:message isOutGoing:YES];
+        [[HBXMPPCoreDataManager manager] HB_XMPPSaveChatMessage:message isOutGoing:YES];
     });
 }
 #pragma mark - 移除所有引用
