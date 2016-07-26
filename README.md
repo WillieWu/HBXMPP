@@ -1,6 +1,6 @@
 # HBXMPP
 ---
-![效果图](http://upload-images.jianshu.io/upload_images/620797-a13ec1658e5e406c.gif?imageMogr2/auto-orient/strip)
+![效果图](http://7xnt2l.com1.z0.glb.clouddn.com/drag2.gif)
 
 ######先看看项目结构图
 ![结构图](http://upload-images.jianshu.io/upload_images/620797-bd1511df0c191cc4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)

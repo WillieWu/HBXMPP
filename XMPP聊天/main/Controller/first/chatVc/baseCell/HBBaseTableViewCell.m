@@ -81,7 +81,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         self.userIconName.HB_X = self.userIconImage.HB_X - self.userIconName.getWidth - HBUserIconImageToTop;
         
         self.chatBg.HB_X = CGRectGetMaxX(self.userIconName.frame) - self.chatBg.HB_W;
-        self.chatBg.image = self.getLeftImage;
+        self.chatBg.image = self.getRightImage;
         
     }else{
         
@@ -90,7 +90,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         self.userIconName.HB_X = CGRectGetMaxX(self.userIconImage.frame) + HBUserIconImageToTop;
         
         self.chatBg.HB_X = self.userIconName.HB_X;
-        self.chatBg.image = self.getRightImage;
+        self.chatBg.image = self.getLeftImage;
     }
 }
 
@@ -122,12 +122,12 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
 - (HBLable *)userIconName
 {
     if (!_userIconName) {
-        _userIconName = [[HBLable alloc] initWithFrame:CGRectMake(0, self.userIconImage.HB_Y, HBChatBgMaxWidth, 30)];
+        _userIconName = [[HBLable alloc] initWithFrame:CGRectMake(0, self.userIconImage.HB_Y, HBChatBgMaxWidth, HBUserIconNameH)];
 //        _userIconName.HB_H = 30;
 //        _userIconName.HB_W = HBChatBgMaxWidth;
 //        _userIconName.HB_Y = self.userIconImage.HB_Y;
-        _userIconName.backgroundColor = [UIColor redColor];
-        _userIconName.textColor = [UIColor blueColor];
+//        _userIconName.backgroundColor = [UIColor redColor];
+        _userIconName.textColor = [UIColor whiteColor];
     }
     return _userIconName;
 }
@@ -138,7 +138,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         _chatBg.userInteractionEnabled = YES;
         _chatBg.HB_W = HBChatBgMaxWidth;
         _chatBg.HB_H = 80;
-        _chatBg.HB_Y = CGRectGetMaxY(self.userIconName.frame) + HBChatBgToUserIconImage;
+        _chatBg.HB_Y = CGRectGetMaxY(self.userIconName.frame) + HBChatBgToUserIconName;
 //        _chatBg.contentMode = UIViewContentModeScaleToFill;
 //        _chatBg.backgroundColor = [UIColor colorWithRed:0.6816 green:0.9571 blue:0.5959 alpha:1.0];
     }
@@ -148,7 +148,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
 {
     
     if (!_getLeftImage) {
-        _getLeftImage = [UIImage releizeImage:@"mqz_photoTag_labelLeftDown"];
+        _getLeftImage = [UIImage releizeImage:@"chat_recive_nor"];
     }
     return _getLeftImage;
 }
@@ -156,7 +156,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
 {
     
     if (!_getRightImage) {
-        _getRightImage = [UIImage releizeImage:@"mqz_photoTag_labelRightDown"];
+        _getRightImage = [UIImage releizeImage:@"chat_send_dim"];
     }
     return _getRightImage;
 }

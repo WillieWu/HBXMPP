@@ -29,6 +29,8 @@
     //保留上一次高度
     CGRect _lastTextViewFrame;
     CGRect _lastButtomFrame;
+    
+    NSTimeInterval _tempTime;
 }
 @property (nonatomic, strong) HBTextView *textView;
 @property (nonatomic, weak) HBButton *selectBtn;
@@ -147,11 +149,15 @@ static CGFloat textViewY = 5;
     if ([self.delegate respondsToSelector:@selector(chatView:SendText:)]) {
         [self.delegate chatView:self SendText:getChatStr];
     }
-    
     self.textView.text = @"";
-    self.frame = [self originSelfFrame];
+    
+    CGRect fixFrame = _originFrame;
+    fixFrame.origin.y = self.HB_Y + (self.HB_H - _originaButtomViewH);
+    
+    self.frame = fixFrame;
     self.textView.frame = [self originTextViewFrame];
 }
+
 #pragma mark - UITextViewDelegate
 - (void)textViewDidBeginEditing:(UITextView *)textView{
     [textView becomeFirstResponder];
@@ -221,40 +227,86 @@ static CGFloat textViewY = 5;
     whbLog(@"开始录音");
     [[HBRecordHUD shareRecordHUD] starRecord];
     [[HBRecordHUD shareRecordHUD] showRecordingImageNames:@[@"1",@"2",@"3",@"4"]];
+    
+    [[HBRecordHUD shareRecordHUD] recordTime:^(NSTimeInterval time) {
+    
+        _tempTime = time;
+        
+        if (time > 2) {
+            
+            if ([self.delegate respondsToSelector:@selector(chatView:recordType:voiceModel:)]) {
+                
+                HBVoiceModel *model = [HBVoiceModel new];
+                model.path = [[HBRecordHUD shareRecordHUD] lastVoicePath];
+                
+                [self.delegate chatView:self recordType:RecordTypeStar voiceModel:model];
+                
+            }
+        }
+        
+    }];
+    
+    
+    
 }
 - (void)canclePress:(HBButton *)btn{
+    
     whbLog(@"取消录音");
+
+    if (_tempTime > 2) {
+        
+        if ([self.delegate respondsToSelector:@selector(chatView:recordType:voiceModel:)]) {
+            
+            HBVoiceModel *model = [HBVoiceModel new];
+            model.path = [[HBRecordHUD shareRecordHUD] lastVoicePath];
+            model.lengthTime = [[HBRecordHUD shareRecordHUD] lastVoiceLengthTime];
+            
+            [self.delegate chatView:self recordType:RecordTypeFinish voiceModel:model];
+            
+        }
+        
+    }else{
     
-    [[HBRecordHUD shareRecordHUD] stopRecord];
-    
-    if ([[HBRecordHUD shareRecordHUD] isTooShortTime]) {
         whbLog(@"时间太短，哥们");
         //展示时间太短提示
         [[HBRecordHUD shareRecordHUD] showShortTimeImageName:@"little_time"];
         
         //删除取消录音
-        if ([NSFileManager fileExist:[[HBRecordHUD shareRecordHUD] lastVoicePath]])
-            [NSFileManager deleteFile:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
-        
-    }else{
-    
-        if ([self.delegate respondsToSelector:@selector(chatView:SendVoice:)]) {
+        if ([NSFileManager fileExist:[[HBRecordHUD shareRecordHUD] lastVoicePath]]){
             
-            [self.delegate chatView:self SendVoice:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
+            [NSFileManager deleteFile:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
+            if ([self.delegate respondsToSelector:@selector(chatView:recordType:voiceModel:)]) {
+                
+                HBVoiceModel *model = [HBVoiceModel new];
+                model.path = [[HBRecordHUD shareRecordHUD] lastVoicePath];
+                
+                [self.delegate chatView:self recordType:RecordTypeCancle voiceModel:model];
+                
+            }
         }
-        
     }
-    
-    
+
+    [[HBRecordHUD shareRecordHUD] stopRecord];
+    _tempTime = 0;
     
 }
 - (void)TouchUpOutsidePress:(HBButton *)btn{
     whbLog(@"已取消发送");
     //停止录音
     [[HBRecordHUD shareRecordHUD] stopRecord];
+    _tempTime = 0;
     //删除录音
     if ([NSFileManager fileExist:[[HBRecordHUD shareRecordHUD] lastVoicePath]])
         [NSFileManager deleteFile:[[HBRecordHUD shareRecordHUD] lastVoicePath]];
+    
+    if ([self.delegate respondsToSelector:@selector(chatView:recordType:voiceModel:)]) {
+        
+        HBVoiceModel *model = [HBVoiceModel new];
+        model.path = [[HBRecordHUD shareRecordHUD] lastVoicePath];
+        
+        [self.delegate chatView:self recordType:RecordTypeCancle voiceModel:model];
+        
+    }
 }
 #pragma mark - keyBoardNotifacation
 - (void)keyBoardWillShow:(NSNotification *)info{

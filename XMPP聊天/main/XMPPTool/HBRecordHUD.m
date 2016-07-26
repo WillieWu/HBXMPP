@@ -25,6 +25,7 @@
 @property (nonatomic, strong) UIImageView *statuImageView;
 @property (nonatomic, assign) recordStatus status;
 @property (nonatomic, copy) playCompletionBlcok completion;
+@property (nonatomic, copy) recordTimeBlcok recordTime;
 @end
 
 
@@ -181,17 +182,17 @@ static HBRecordHUD *recordHUD = nil;
     }];
     
 }
-- (BOOL)isTooShortTime
+- (void)recordTime:(recordTimeBlcok)time;
 {
-    if (timerValue > 2) {
-        
-        return NO;
-    }
-    return YES;
+    self.recordTime = time;
 }
 - (NSString *)lastVoicePath
 {
     return _lastPath;
+}
+- (NSTimeInterval)lastVoiceLengthTime
+{
+    return timerValue;
 }
 - (void)update{
 
@@ -263,6 +264,9 @@ static HBRecordHUD *recordHUD = nil;
     
     timerValue += timeInterval;
     
+    if (self.recordTime) {
+        self.recordTime(timerValue);
+    }
 }
 #pragma mark - AVAudioPlayerDelegate
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag

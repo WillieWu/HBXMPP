@@ -20,4 +20,9 @@
  */
 - (void)HB_XMPPSaveChatMessage:(XMPPMessage *)xmppMessage isOutGoing:(BOOL)isOutGoing;
 
+- (void)HB_XMPPUpdateVoiceDate:(NSDate *)date time:(NSString *)time;
+
+- (void)HB_XMPPDeleteWithDate:(NSDate *)date;
+
+- (BOOL)HB_XMPPContainsWithVoiceName:(NSString *)name;
 @end

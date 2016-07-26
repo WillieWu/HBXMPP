@@ -120,10 +120,6 @@
     if (_msgFetchResult.fetchedObjects.count)
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:_msgFetchResult.fetchedObjects.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:NO];
     
-        
-    
-    
-    
 }
 #pragma mark - UITableViewDataSource,UITableViewDelegat
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -149,8 +145,7 @@
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
 {
     switch (type) {
-        case NSFetchedResultsChangeInsert:
-        {
+        case NSFetchedResultsChangeInsert:{
             
             if ([anObject isKindOfClass:[ChatMessage class]]) {
                 
@@ -168,7 +163,41 @@
 
         }
             break;
+        case NSFetchedResultsChangeUpdate:{
+        
+            if ([anObject isKindOfClass:[ChatMessage class]]) {
+                
+                HBChatModel *chatModel = [self.chatContents lastObject];
+                
+                chatModel.message = anObject;
+                
+                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+              
+                
+            }
+        
+        }
+            break;
+        case NSFetchedResultsChangeDelete:{
             
+            
+//            if ([anObject isKindOfClass:[ChatMessage class]]) {
+//                
+//                ChatMessage *msg = (ChatMessage *)anObject;
+//                
+//                HBChatModel *chatModel = [self.chatContents lastObject];
+//                
+//                chatModel.message = msg;
+//                
+//                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+//                
+//                
+//            }
+            
+            
+            
+        }
+            break;
         default:
             break;
     }
@@ -183,17 +212,59 @@
     [message addBody:content];
     [HBXMPPMananger.xmppStream sendElement:message];
 }
-- (void)chatView:(HBChatView *)chatView SendVoice:(NSString *)voicePath
+- (void)chatView:(HBChatView *)chatView recordType:(RecordType)type voiceModel:(HBVoiceModel *)model
 {
-    whbLog(@"SendVoice : %@",[voicePath lastPathComponent]);
-    if (voicePath.length > 0) {
-        
-        XMPPJID *toFriend = [XMPPJID jidWithUser:self.title domain:HBXMPPHostName resource:nil];
-        XMPPMessage * message = [[XMPPMessage alloc] initWithType:HBTypeVoice to:toFriend];
-        [message addBody:[voicePath lastPathComponent]];
-        [[HBXMPPCoreDataManager manager] HB_XMPPSaveChatMessage:message isOutGoing:YES];
-        
+    whbLog(@"SendVoice : %@",[model.path lastPathComponent]);
+    switch (type) {
+        case RecordTypeStar: {
+            
+            if ([[HBXMPPCoreDataManager manager] HB_XMPPContainsWithVoiceName:[model.path lastPathComponent]]) {//存在此数据
+                return;
+            }
+            
+            XMPPJID *toFriend = [XMPPJID jidWithUser:self.title domain:HBXMPPHostName resource:nil];
+            XMPPMessage * message = [[XMPPMessage alloc] initWithType:HBTypeVoice to:toFriend];
+            [message addBody:[model.path lastPathComponent]];
+            [[HBXMPPCoreDataManager manager] HB_XMPPSaveChatMessage:message isOutGoing:YES];
+
+            break;
+        }
+        case RecordTypeCancle: {//删除
+            
+            HBChatModel *chatModel = [self.chatContents lastObject];
+            
+            if (![chatModel.message.chatBody isEqualToString:[model.path lastPathComponent]]) {
+                return;
+            }
+            
+            [[HBXMPPCoreDataManager manager] HB_XMPPDeleteWithDate:chatModel.message.timestamp];
+            
+            NSIndexPath *dRow = [NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0];
+            [self.chatContents removeObject:chatModel];
+            [self.tableView deleteRowsAtIndexPaths:@[dRow] withRowAnimation:UITableViewRowAnimationFade];
+            
+            break;
+        }
+        case RecordTypeFinish: {//修改
+            
+            HBChatModel *chatModel = [self.chatContents lastObject];
+            
+            if (![chatModel.message.chatBody isEqualToString:[model.path lastPathComponent]]) {
+                return;
+            }
+            
+            NSString *time = [NSString stringWithFormat:@"%@",@(model.lengthTime)];
+            [[HBXMPPCoreDataManager manager] HB_XMPPUpdateVoiceDate:chatModel.message.timestamp time:time];
+            
+            break;
+        }
     }
+    
+    
+        
+    
+        
+    
 }
 - (void)chatViewDidChangeFrame:(HBChatView *)chatView
 {

@@ -16,6 +16,7 @@ typedef NS_ENUM(NSInteger,recordStatus) {
 };
 typedef void(^playCompletionBlcok)(BOOL finished);
 typedef void(^beginPlayBlcok)();
+typedef void(^recordTimeBlcok)(NSTimeInterval time);
 
 @interface HBRecordHUD : NSObject
 + (instancetype)shareRecordHUD;
@@ -32,6 +33,7 @@ typedef void(^beginPlayBlcok)();
 - (void)showShortTimeImageName:(NSString *)shortName;
 - (void)hideCorver;
 #pragma mark - 其他
-- (BOOL)isTooShortTime;
+- (void)recordTime:(recordTimeBlcok)time;
 - (NSString *)lastVoicePath;
+- (NSTimeInterval)lastVoiceLengthTime;
 @end

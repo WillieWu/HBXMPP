@@ -61,13 +61,55 @@ static HBXMPPCoreDataManager *_manager;
     }else{
         messageCoreData.chatType = xmppMessage.type;
     }
-    
+    messageCoreData.voiceTime = xmppMessage.subject;
     messageCoreData.timestamp = [NSDate date];
     NSError *error = nil;
     if (![self.mainContext save:&error]) {
         NSLog(@"聊天信息保存失败");
     }
     
+}
+- (void)HB_XMPPUpdateVoiceDate:(NSDate *)date time:(NSString *)time;{
+
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"ChatMessage"];
+    NSPredicate *predecate = [NSPredicate predicateWithFormat:@"timestamp == %@",date];
+    request.predicate = predecate;
+    NSArray *array = [self.mainContext executeFetchRequest:request error:nil];
+    ChatMessage *msg = [array firstObject];
+    if (!msg) {
+        whbLog(@"没有此条数据");
+        return;
+    }
+    msg.voiceTime = time;
+    NSError *error;
+    if (![self.mainContext save:&error]) {
+        whbLog(@"保存失败:%@",error.description);
+    }
+}
+- (void)HB_XMPPDeleteWithDate:(NSDate *)date{
+
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"ChatMessage"];
+    NSPredicate *predecate = [NSPredicate predicateWithFormat:@"timestamp == %@",date];
+    request.predicate = predecate;
+    NSArray *array = [self.mainContext executeFetchRequest:request error:nil];
+    ChatMessage *msg = [array firstObject];
+    if (!msg) {
+        whbLog(@"没有此条数据");
+        return;
+    }
+    [self.mainContext deleteObject:msg];
+}
+- (BOOL)HB_XMPPContainsWithVoiceName:(NSString *)name;
+{
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"ChatMessage"];
+    NSPredicate *predecate = [NSPredicate predicateWithFormat:@"chatBody == %@",name];
+    request.predicate = predecate;
+    NSArray *array = [self.mainContext executeFetchRequest:request error:nil];
+    ChatMessage *msg = [array firstObject];
+    if (!msg) {
+        return NO;
+    }
+    return YES;
 }
 - (NSURL *)applicationDocumentsDirectory {
    

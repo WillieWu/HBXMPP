@@ -22,7 +22,7 @@
  */
 @property (nonatomic, strong) UILabel * timeLable;
 @property (nonatomic, strong) UIButton * playBtn;
-@property (nonatomic, strong) NSTimer * time;
+@property (nonatomic, strong) CADisplayLink * link;
 @end
 
 @implementation HBVoiceCell
@@ -39,13 +39,13 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
     self.progressImageView.HB_Size = CGSizeMake(22, 22);
     self.progressImageView.HB_centerY = self.chatBg.HB_centerY;
     
     if ([self.chatModel.message.outgoing boolValue]) {
         
-        self.progressImageView.HB_X = CGRectGetMaxX(self.chatBg.frame) - self.progressImageView.HB_W - 10;
+        self.progressImageView.HB_X = CGRectGetMaxX(self.chatBg.frame) - self.progressImageView.HB_W - 15;
         self.timeLable.HB_centerY = self.chatBg.HB_centerY;
         self.timeLable.HB_X = self.chatBg.HB_X - self.timeLable.HB_W - 5;
         
@@ -58,7 +58,7 @@
     }
     
     self.playBtn.frame = self.chatBg.bounds;
-    [self.playBtn setBackgroundImage:self.chatBg.image forState:normal];
+//    [self.playBtn setBackgroundImage:self.chatBg.image forState:normal];
 }
 #pragma mark - Method
 - (void)setChatModel:(HBChatModel *)chatModel
@@ -75,8 +75,18 @@
        
     }
     
-    self.timeLable.text = [NSString stringWithFormat:@"%@",self.chatModel.voiceTime];
-    [self.timeLable sizeToFit];
+    if (self.chatModel.voiceTime.length && self.chatModel.voiceTime != nil) {
+        
+        self.progressImageView.hidden = NO;
+        
+        self.timeLable.text = [NSString stringWithFormat:@"\%@\"",self.chatModel.voiceTime];
+        [self.timeLable sizeToFit];
+        
+    }else{
+        self.timeLable.text = @"";
+        self.progressImageView.hidden = YES;
+    }
+    
 }
 - (void)playChick
 {
@@ -89,13 +99,13 @@
 }
 - (void)beginProgress{
     
-    [[NSRunLoop mainRunLoop] addTimer:self.time forMode:NSRunLoopCommonModes];
+    [self.link addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 }
 - (void)stopProgress{
 
-    if (self.time) {
-        [self.time invalidate];
-        self.time = nil;
+    if (self.link) {
+        [self.link invalidate];
+        self.link = nil;
     }
     if ([self.chatModel.message.outgoing boolValue]) {
         
@@ -132,7 +142,7 @@
     if (!_progressImageView) {
         _progressImageView = [[UIImageView alloc] init];
         _progressImageView.contentMode = UIViewContentModeCenter;
-        _progressImageView.backgroundColor = [UIColor redColor];
+//        _progressImageView.backgroundColor = [UIColor redColor];
         _progressImageView.userInteractionEnabled = YES;
     }
     return _progressImageView;
@@ -142,7 +152,8 @@
     if (!_timeLable) {
         _timeLable = [[UILabel alloc] init];
 //        _timeLable.backgroundColor = [UIColor redColor];
-        
+        _timeLable.textColor = [UIColor whiteColor];
+        _timeLable.font = [UIFont systemFontOfSize:13];
     }
     return _timeLable;
 }
@@ -155,11 +166,12 @@
     }
     return _playBtn;
 }
-- (NSTimer *)time
+- (CADisplayLink *)link
 {
-    if (!_time) {
-        _time = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timeBegin) userInfo:nil repeats:YES];
+    if (!_link) {
+        _link = [CADisplayLink displayLinkWithTarget:self selector:@selector(timeBegin)];
+        _link.frameInterval = 30;
     }
-    return _time;
+    return _link;
 }
 @end

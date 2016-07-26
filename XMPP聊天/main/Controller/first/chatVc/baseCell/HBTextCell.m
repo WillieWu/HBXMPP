@@ -13,7 +13,8 @@
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     if (self = [super initWithStyle:style reuseIdentifier:reuseIdentifier]) {
-        [self.chatBg addSubview:self.chatMessage];
+        [self.contentView addSubview:self.chatMessage];
+        
     }
     return self;
 }
@@ -22,6 +23,7 @@
     [super layoutSubviews];
 
     self.chatMessage.HB_Size = self.chatModel.textSize;
+    self.chatMessage.HB_center = self.chatBg.HB_center;
 #warning 功能完善后，优化异步绘制。textKit -> CoreText
 }
 
@@ -35,8 +37,8 @@
 - (UILabel *)chatMessage
 {
     if (!_chatMessage) {
-        _chatMessage = [[UILabel alloc] initWithFrame:CGRectMake(padding, 0, 0, 40)];
-        _chatMessage.textColor = [UIColor whiteColor];
+        _chatMessage = [[UILabel alloc] init];
+        _chatMessage.textColor = [UIColor blackColor];
         _chatMessage.numberOfLines = 0;
         _chatMessage.font = chatTextFont;
     }

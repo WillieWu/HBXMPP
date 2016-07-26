@@ -31,6 +31,7 @@
 		5E228A041D46019800A18258 /* ChatFriends.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A021D46019800A18258 /* ChatFriends.m */; };
 		5E228A4B1D46131700A18258 /* ChatMessage+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A481D46131700A18258 /* ChatMessage+CoreDataProperties.m */; };
 		5E228A4C1D46131700A18258 /* ChatMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E228A4A1D46131700A18258 /* ChatMessage.m */; };
+		5E3117771D4737CE000C76ED /* HBVoiceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E3117761D4737CE000C76ED /* HBVoiceModel.m */; };
 		5E36A1CB1C181B4B004BFCBA /* HBFirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E36A1CA1C181B4B004BFCBA /* HBFirstViewController.m */; };
 		5E36A1CF1C181B61004BFCBA /* HBTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E36A1CE1C181B61004BFCBA /* HBTwoViewController.m */; };
 		5E4EE1EB1C23EC4D00607EBC /* HBBaseTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E4EE1EA1C23EC4D00607EBC /* HBBaseTableViewCell.m */; };
@@ -405,6 +406,8 @@
 		5E228A481D46131700A18258 /* ChatMessage+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ChatMessage+CoreDataProperties.m"; sourceTree = "<group>"; };
 		5E228A491D46131700A18258 /* ChatMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatMessage.h; sourceTree = "<group>"; };
 		5E228A4A1D46131700A18258 /* ChatMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatMessage.m; sourceTree = "<group>"; };
+		5E3117751D4737CE000C76ED /* HBVoiceModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBVoiceModel.h; sourceTree = "<group>"; };
+		5E3117761D4737CE000C76ED /* HBVoiceModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBVoiceModel.m; sourceTree = "<group>"; };
 		5E36A1C91C181B4B004BFCBA /* HBFirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBFirstViewController.h; sourceTree = "<group>"; };
 		5E36A1CA1C181B4B004BFCBA /* HBFirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HBFirstViewController.m; sourceTree = "<group>"; };
 		5E36A1CD1C181B61004BFCBA /* HBTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HBTwoViewController.h; sourceTree = "<group>"; };
@@ -998,6 +1001,8 @@
 				5E62000F1CB4F74B00347E29 /* HBChatModel.m */,
 				5E8CC2501D06B28F00677EDE /* HBTextAttachment.h */,
 				5E8CC2511D06B28F00677EDE /* HBTextAttachment.m */,
+				5E3117751D4737CE000C76ED /* HBVoiceModel.h */,
+				5E3117761D4737CE000C76ED /* HBVoiceModel.m */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -2626,6 +2631,7 @@
 				5E228A4B1D46131700A18258 /* ChatMessage+CoreDataProperties.m in Sources */,
 				5EA848B91C1584D600997CB0 /* XMPPvCardCoreDataStorage.m in Sources */,
 				5E09C1121C167ECF00A789B5 /* XMPPIDTracker.m in Sources */,
+				5E3117771D4737CE000C76ED /* HBVoiceModel.m in Sources */,
 				5EA849171C15864200997CB0 /* XMPPConstants.m in Sources */,
 				5EA848A31C1584D600997CB0 /* XMPPIQ+JabberRPC.m in Sources */,
 				5EA848921C1584D600997CB0 /* XMPPCoreDataStorage.m in Sources */,

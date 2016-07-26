@@ -7,12 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "HBVoiceModel.h"
+
 @class HBChatView;
+
+typedef NS_ENUM(NSInteger, RecordType) {
+    
+    RecordTypeStar,
+    RecordTypeCancle,
+    RecordTypeFinish
+    
+};
 
 @protocol HBChatViewDelegate <NSObject>
 
 - (void)chatView:(HBChatView *)chatView SendText:(NSString *)content;
-- (void)chatView:(HBChatView *)chatView SendVoice:(NSString *)voicePath;
+- (void)chatView:(HBChatView *)chatView recordType:(RecordType)type voiceModel:(HBVoiceModel *)model;
 - (void)chatViewDidChangeFrame:(HBChatView *)chatView;
 @end
 

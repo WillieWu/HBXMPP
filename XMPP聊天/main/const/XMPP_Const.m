@@ -15,10 +15,12 @@ NSString *const HBXMPPOffline            = @"unavailable";
 
 
 const  NSInteger HBUserIconImageWH       = 40;
+const  NSInteger HBUserIconNameH         = 30;
 const  NSInteger HBUserIconImageToTop    = 5;
 const  NSInteger HBChatBgToUserIconImage = 2;
+const  NSInteger HBChatBgToUserIconName  = -10;
 const  NSInteger HBMid                   = 15;
-const  CGFloat padding                   = 10;
+const  CGFloat padding                   = 15;
 NSString *const HBTypeText               = @"chat";
 NSString *const HBTypeVoice              = @"voice";
 NSString *const HBTypeImage              = @"image";

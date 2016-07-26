@@ -14,8 +14,10 @@ UIKIT_EXTERN NSString *const HBXMPPOnline;
 UIKIT_EXTERN NSString *const HBXMPPOffline;
 
 UIKIT_EXTERN const  NSInteger HBUserIconImageWH;
+UIKIT_EXTERN const  NSInteger HBUserIconNameH;
 UIKIT_EXTERN const  NSInteger HBUserIconImageToTop;
 UIKIT_EXTERN const  NSInteger HBChatBgToUserIconImage;
+UIKIT_EXTERN const  NSInteger HBChatBgToUserIconName;
 UIKIT_EXTERN const  NSInteger HBMid;
 UIKIT_EXTERN const  CGFloat padding;//气泡的小尖尖
 UIKIT_EXTERN  NSString *const HBTypeText;

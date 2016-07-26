@@ -27,7 +27,7 @@
 //        //1.文字内容大小
         self.textSize = size;
         
-        getChatBgSize = CGSizeMake(size.width + 2 * padding, size.height);
+        getChatBgSize = CGSizeMake(size.width + 2 * padding, size.height + 2 * padding);
     
     }else if ([message.chatType isEqualToString:HBTypeImage]){//图片
             
@@ -37,10 +37,10 @@
         
     }else if ([message.chatType isEqualToString:HBTypeVoice]){//语音
         
-        self.voiceSize = CGSizeMake(85, 38);
+        self.voiceSize = CGSizeMake(85, 44);
         NSString *path = [RootDocumentPath stringByAppendingPathComponent:message.chatBody];
         self.voiceURL = [NSURL fileURLWithPath:path];
-        self.voiceTime = @"10";
+        self.voiceTime = message.voiceTime;
         
         getChatBgSize = self.voiceSize;
         
@@ -51,7 +51,7 @@
     //2.聊天背景大小
     self.chatBgSize = getChatBgSize;
     //3.行高
-    self.cellHeight = self.chatBgSize.height + HBUserIconImageToTop + HBUserIconImageWH + HBChatBgToUserIconImage + HBUserIconImageToTop;;
+    self.cellHeight = self.chatBgSize.height + HBUserIconImageToTop + HBUserIconNameH + HBChatBgToUserIconName;
     
     
 }
