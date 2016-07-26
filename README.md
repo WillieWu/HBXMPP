@@ -29,7 +29,7 @@
 
 效果就是这样子
 
-![drag](http://upload-images.jianshu.io/upload_images/620797-add9c827a2150a6a.gif?imageMogr2/auto-orient/strip)
+![drag](http://7xnt2l.com1.z0.glb.clouddn.com/drag5.gif)
 
 
 主要就说下`HBChatModel`
