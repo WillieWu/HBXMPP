@@ -26,12 +26,27 @@
     self.chatMessage.HB_center = self.chatBg.HB_center;
 #warning 功能完善后，优化异步绘制。textKit -> CoreText
 }
-
+- (void)pressLong{
+    [super pressLong];
+    
+    if ([self.delegate respondsToSelector:@selector(baseTableViewCell:longPressType:)]) {
+        [self.delegate baseTableViewCell:self longPressType:longPressText];
+    }
+   
+  
+}
 - (void)setChatModel:(HBChatModel *)chatModel
 {
     [super setChatModel:chatModel];
     
     self.chatMessage.attributedText = chatModel.chatContent;
+}
+- (BOOL)canBecomeFirstResponder{
+    return YES;
+}
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender{
+    
+    return YES;
 }
 #pragma mark - getter
 - (UILabel *)chatMessage

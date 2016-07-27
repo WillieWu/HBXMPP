@@ -58,7 +58,15 @@
     }
     
     self.playBtn.frame = self.chatBg.bounds;
-//    [self.playBtn setBackgroundImage:self.chatBg.image forState:normal];
+    
+}
+- (void)pressLong{
+    [super pressLong];
+    
+    if ([self.delegate respondsToSelector:@selector(baseTableViewCell:longPressType:)]) {
+        [self.delegate baseTableViewCell:self longPressType:longPressVoice];
+    }
+    
 }
 #pragma mark - Method
 - (void)setChatModel:(HBChatModel *)chatModel

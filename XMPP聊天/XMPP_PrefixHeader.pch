@@ -16,6 +16,7 @@
 #import "XMPP_Const.h"
 #import "XMPPCoreDataStorage.h"
 #import "HBXMPP.h"
+#import "SVProgressHUD.h"
 
 
 #ifdef DEBUG

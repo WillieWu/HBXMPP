@@ -1,5 +1,12 @@
 # HBXMPP
 ---
+####2016.7.27 补充小功能
+
+![小菜单](http://7xnt2l.com1.z0.glb.clouddn.com/copy.gif)
+
+
+---
+
 ![效果图](http://7xnt2l.com1.z0.glb.clouddn.com/drag2.gif)
 
 ######先看看项目结构图

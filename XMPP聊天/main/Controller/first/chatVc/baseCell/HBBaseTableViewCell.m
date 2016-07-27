@@ -19,14 +19,14 @@
 @property (nonatomic, strong) UIImageView *userIconImage;
 @property (nonatomic, strong) UIImage *getLeftImage;
 @property (nonatomic, strong) UIImage *getRightImage;
-
+@property (nonatomic, strong) UILongPressGestureRecognizer *longPress;
 @end
 
 @implementation HBBaseTableViewCell
 
 static NSString *_otherImageName   = @"anon_group_loading";
 static NSString *_mineImageName    = @"anon_group_loading_fail";
-
+//TODO:完善coredata多线程 聊天多菜单复制等
 + (instancetype)baseCell:(UITableView *)tableView cellType:(NSString *)type
 {
     static NSString *chatID = nil;
@@ -62,7 +62,7 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         [self.contentView addSubview:self.userIconImage];
         [self.contentView addSubview:self.userIconName];
         [self.contentView addSubview:self.chatBg];
-        
+        [self.chatBg addGestureRecognizer:self.longPress];
     }
     return self;
 }
@@ -93,9 +93,17 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         self.chatBg.image = self.getLeftImage;
     }
 }
+- (void)longPressM:(UILongPressGestureRecognizer *)press{
 
-- (void)setChatModel:(HBChatModel *)chatModel
-{
+    if (press.state == UIGestureRecognizerStateBegan) {
+        [self pressLong];
+    }
+    
+}
+- (void)pressLong{
+
+}
+- (void)setChatModel:(HBChatModel *)chatModel{
     _chatModel = chatModel;
     
     NSString *from = nil;
@@ -107,6 +115,13 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         from = [NSString stringWithFormat:@"来自：%@",chatModel.message.bareJidStr];
     }
     self.userIconName.text = from;
+}
+- (BOOL)canBecomeFirstResponder{
+    return YES;
+}
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender{
+    
+    return YES;
 }
 #pragma mark - getter
 - (UIImageView *)userIconImage
@@ -159,5 +174,12 @@ static NSString *_mineImageName    = @"anon_group_loading_fail";
         _getRightImage = [UIImage releizeImage:@"chat_send_dim"];
     }
     return _getRightImage;
+}
+- (UILongPressGestureRecognizer *)longPress
+{
+    if (!_longPress) {
+        _longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressM:)];
+    }
+    return _longPress;
 }
 @end

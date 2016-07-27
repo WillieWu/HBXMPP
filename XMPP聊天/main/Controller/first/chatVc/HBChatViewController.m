@@ -17,9 +17,11 @@
 @import MJRefresh;
 
 
-@interface HBChatViewController ()<NSFetchedResultsControllerDelegate,HBChatViewDelegate,UITableViewDataSource,UITableViewDelegate>
+@interface HBChatViewController ()<NSFetchedResultsControllerDelegate,HBChatViewDelegate,UITableViewDataSource,UITableViewDelegate,HBBaseTableViewCellDelegate>
 {
     NSFetchedResultsController *_msgFetchResult;
+    HBChatModel *_tempModel;
+    UIPasteboard *_pageBoard;
 }
 @property (strong, nonatomic) HBChatTableView *tableView;
 @property (nonatomic, strong) HBChatView *chatView;
@@ -82,6 +84,8 @@
        
 
     }];
+    
+    [self.view becomeFirstResponder];
 
 }
 
@@ -131,6 +135,7 @@
     
     HBChatModel *chatModel = self.chatContents[indexPath.row];
     HBBaseTableViewCell *cell = [HBBaseTableViewCell baseCell:tableView cellType:chatModel.message.chatType];
+    cell.delegate = self;
     cell.chatModel = chatModel;
     
     return cell;
@@ -142,8 +147,7 @@
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate
-- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
-{
+- (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath{
     switch (type) {
         case NSFetchedResultsChangeInsert:{
             
@@ -167,13 +171,19 @@
         
             if ([anObject isKindOfClass:[ChatMessage class]]) {
                 
-                HBChatModel *chatModel = [self.chatContents lastObject];
+                ChatMessage *msg = (ChatMessage *)anObject;
                 
-                chatModel.message = anObject;
+                [self.chatContents enumerateObjectsUsingBlock:^(HBChatModel *chatModel, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    if ([chatModel.message.timestamp isEqualToDate:msg.timestamp]) {
+                        
+                        chatModel.message = msg;
+                        
+                        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+                        *stop = YES;
+                    }
                 
-                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-              
-                
+                 }];
             }
         
         }
@@ -181,18 +191,24 @@
         case NSFetchedResultsChangeDelete:{
             
             
-//            if ([anObject isKindOfClass:[ChatMessage class]]) {
-//                
-//                ChatMessage *msg = (ChatMessage *)anObject;
-//                
-//                HBChatModel *chatModel = [self.chatContents lastObject];
-//                
-//                chatModel.message = msg;
-//                
-//                [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
-//                
-//                
-//            }
+            if ([anObject isKindOfClass:[ChatMessage class]]) {
+                
+                ChatMessage *msg = (ChatMessage *)anObject;
+                
+                [self.chatContents enumerateObjectsUsingBlock:^(HBChatModel *chatModel, NSUInteger idx, BOOL * _Nonnull stop) {
+                    
+                    if ([chatModel.message.timestamp isEqualToDate:msg.timestamp]) {
+                        
+                        [self.chatContents removeObject:chatModel];
+                        
+                        [self.tableView deleteRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:idx inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+                        
+                        *stop = YES;
+                    }
+                    
+                }];
+
+            }
             
             
             
@@ -205,15 +221,13 @@
 }
 
 #pragma mark - HBChatViewDelegate
-- (void)chatView:(HBChatView *)chatView SendText:(NSString *)content
-{
+- (void)chatView:(HBChatView *)chatView SendText:(NSString *)content{
     XMPPJID *toFriend = [XMPPJID jidWithUser:self.title domain:HBXMPPHostName resource:nil];
     XMPPMessage * message = [[XMPPMessage alloc] initWithType:HBTypeText to:toFriend];
     [message addBody:content];
     [HBXMPPMananger.xmppStream sendElement:message];
 }
-- (void)chatView:(HBChatView *)chatView recordType:(RecordType)type voiceModel:(HBVoiceModel *)model
-{
+- (void)chatView:(HBChatView *)chatView recordType:(RecordType)type voiceModel:(HBVoiceModel *)model{
     whbLog(@"SendVoice : %@",[model.path lastPathComponent]);
     switch (type) {
         case RecordTypeStar: {
@@ -239,10 +253,6 @@
             
             [[HBXMPPCoreDataManager manager] HB_XMPPDeleteWithDate:chatModel.message.timestamp];
             
-            NSIndexPath *dRow = [NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0];
-            [self.chatContents removeObject:chatModel];
-            [self.tableView deleteRowsAtIndexPaths:@[dRow] withRowAnimation:UITableViewRowAnimationFade];
-            
             break;
         }
         case RecordTypeFinish: {//修改
@@ -266,14 +276,90 @@
         
     
 }
-- (void)chatViewDidChangeFrame:(HBChatView *)chatView
-{
+- (void)chatViewDidChangeFrame:(HBChatView *)chatView{
 //    whbLog(@"chatViewDidChangeFrame - %@",NSStringFromCGRect(chatView.frame));
     CGFloat toButtom = [UIScreen mainScreen].bounds.size.height - chatView.HB_Y;
     [self.tableView setContentInset:UIEdgeInsetsMake(0, 0, toButtom, 0)];
     [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.chatContents.count - 1 inSection:0] atScrollPosition:UITableViewScrollPositionBottom animated:YES];
 }
+#pragma mark - HBBaseTableViewCellDelegate
+- (void)baseTableViewCell:(HBBaseTableViewCell *)cell longPressType:(longPress)press{
 
+    _tempModel = cell.chatModel;
+    
+    CGRect getF = [cell convertRect:cell.chatBg.frame toView:self.view];
+    
+    UIMenuController *MenuVc = [UIMenuController sharedMenuController];
+    MenuVc.arrowDirection = UIMenuControllerArrowDown;
+    switch (press) {
+        case longPressText: {
+            
+            UIMenuItem *item1 = [[UIMenuItem alloc] initWithTitle:@"复制" action:@selector(copyContent:)];
+            UIMenuItem *item2 = [[UIMenuItem alloc] initWithTitle:@"粘贴" action:@selector(pasteContent:)];
+            UIMenuItem *item3 = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(deleteContent:)];
+            
+            MenuVc.menuItems = @[item1,item2,item3];
+            
+            break;
+        }
+        case longPressImage: {
+            
+            UIMenuItem *item3 = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(deleteContent:)];
+            
+            MenuVc.menuItems = @[item3];
+            
+            break;
+        }
+        case longPressVoice: {
+            
+            UIMenuItem *item3 = [[UIMenuItem alloc] initWithTitle:@"删除" action:@selector(deleteContent:)];
+            
+            MenuVc.menuItems = @[item3];
+            
+            break;
+        }
+        case longPressMap: {
+            
+            break;
+        }
+    }
+    
+    [MenuVc setTargetRect:getF inView:self.view];
+    [MenuVc setMenuVisible:YES animated:YES];
+}
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    if (action == @selector(copyContent:) || action == @selector(pasteContent:) || action == @selector(deleteContent:)) {
+        return YES;
+    }
+    
+    return NO;
+}
+#pragma mark - UIMenuController
+- (void)copyContent:(UIMenuItem *)item{
+    
+    _pageBoard = [UIPasteboard pasteboardWithName:@"小毛驴" create:YES];
+    _pageBoard.string = _tempModel.message.chatBody;
+    
+    if (_pageBoard.string.length > 0) {
+        [SVProgressHUD setBackgroundColor:[UIColor whiteColor]];
+        [SVProgressHUD setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [SVProgressHUD setMinimumDismissTimeInterval:0.25];
+        [SVProgressHUD showSuccessWithStatus:@"复制完成"];
+    }
+}
+- (void)pasteContent:(UIMenuItem *)item{
+    
+    whbLog(@"粘贴 - %@",_pageBoard.string);
+}
+- (void)deleteContent:(UIMenuItem *)item{
+    
+    [[HBXMPPCoreDataManager manager] HB_XMPPDeleteWithDate:_tempModel.message.timestamp];
+}
 #pragma mark - getter
 - (HBChatTableView *)tableView
 {

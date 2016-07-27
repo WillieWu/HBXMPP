@@ -30,6 +30,16 @@
     self.imageContent.HB_Size = self.chatModel.imageSize;
     
 }
+- (void)pressLong{
+
+    [super pressLong];
+    
+    if ([self.delegate respondsToSelector:@selector(baseTableViewCell:longPressType:)]) {
+        [self.delegate baseTableViewCell:self longPressType:longPressImage];
+    }
+    
+    
+}
 - (void)setChatModel:(HBChatModel *)chatModel
 {
     [super setChatModel:chatModel];
@@ -49,6 +59,7 @@
 {
     if (!_imageContent) {
         _imageContent = [[UIImageView alloc] init];
+        _imageContent.userInteractionEnabled = YES;
         _imageContent.HB_X = padding;
         _imageContent.HB_Y = padding;
     }
